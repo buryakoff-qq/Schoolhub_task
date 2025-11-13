@@ -10,5 +10,4 @@ public interface IStudentRepository
     Task AddAsync(Student student, CancellationToken ct = default);
     Task UpdateAsync(Student student, CancellationToken ct = default);
     Task RemoveAsync(Student student, CancellationToken ct = default);
-    Task SaveChangesAsync(CancellationToken ct = default);
 }

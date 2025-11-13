@@ -29,7 +29,6 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
         var sClass = new SchoolClass(name, teacher);
 
         await classes.AddAsync(sClass, ct);
-        await classes.SaveChangesAsync(ct);
 
         return sClass.ToDto();
     }
@@ -46,7 +45,6 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
         sClass.Update(name, teacher);
 
         await classes.UpdateAsync(sClass, ct);
-        await classes.SaveChangesAsync(ct);
 
         return sClass.ToDto();
     }
@@ -57,7 +55,6 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
                      ?? throw new InvalidOperationException("Class not found");
 
         await classes.RemoveAsync(sClass, ct);
-        await classes.SaveChangesAsync(ct);
     }
 
     public async Task AssignAsync(Guid id, Guid studentId, CancellationToken ct = default)
@@ -74,7 +71,6 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
             throw new InvalidOperationException("Student already assigned");
         
         sClass.AddStudent(studentId);
-        await classes.SaveChangesAsync(ct);
     }
     
     public async Task UnassignAsync(Guid classId, Guid studentId, CancellationToken ct = default)
@@ -84,6 +80,5 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
             throw new InvalidOperationException("Class not found");
 
         sClass.RemoveStudent(studentId);
-        await classes.SaveChangesAsync(ct);
     }
 }

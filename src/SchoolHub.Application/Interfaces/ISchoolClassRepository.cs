@@ -9,5 +9,4 @@ public interface ISchoolClassRepository
     Task AddAsync(SchoolClass schoolClass, CancellationToken ct = default);
     Task UpdateAsync(SchoolClass schoolClass, CancellationToken ct = default);
     Task RemoveAsync(SchoolClass schoolClass, CancellationToken ct = default);
-    Task SaveChangesAsync(CancellationToken ct = default);
 }

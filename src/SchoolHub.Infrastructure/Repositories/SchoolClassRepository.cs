@@ -7,29 +7,30 @@ namespace Schoolhub.Infrastructure.Repositories;
 
 public sealed class SchoolClassRepository(AppDbContext db) : ISchoolClassRepository
 {
-    private readonly AppDbContext _db = db;
-
-    public Task<SchoolClass?> GetByIdAsync(Guid id, CancellationToken ct = default)
-        => _db.SchoolClasses.FirstOrDefaultAsync(s => s.Id == id, ct);
-
-    public Task<List<SchoolClass>> GetAllAsync(CancellationToken ct = default)
-        => _db.SchoolClasses.ToListAsync(ct);
-
-    public Task AddAsync(SchoolClass sClass, CancellationToken ct = default)
-        => _db.SchoolClasses.AddAsync(sClass, ct).AsTask();
-
-    public Task UpdateAsync(SchoolClass sClass, CancellationToken ct = default)
+    public async Task<SchoolClass> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        _db.SchoolClasses.Update(sClass);
-        return Task.CompletedTask;
+        return await db.SchoolClasses.FirstOrDefaultAsync(c => c.Id == id, ct);
     }
 
-    public Task RemoveAsync(SchoolClass sClass, CancellationToken ct = default)
+    public async Task<List<SchoolClass>> GetAllAsync(CancellationToken ct = default)
     {
-        _db.SchoolClasses.Remove(sClass);
-        return Task.CompletedTask;
+        return await db.SchoolClasses.ToListAsync(ct);
     }
 
-    public Task SaveChangesAsync(CancellationToken ct = default)
-        => _db.SaveChangesAsync(ct);
+    public async Task AddAsync(SchoolClass sClass, CancellationToken ct = default)
+    {
+        await db.SchoolClasses.AddAsync(sClass, ct);   
+    }
+
+    public async Task UpdateAsync(SchoolClass sClass, CancellationToken ct = default)
+    {
+        db.SchoolClasses.Update(sClass);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task RemoveAsync(SchoolClass sClass, CancellationToken ct = default)
+    {
+        db.SchoolClasses.Remove(sClass);
+        await db.SaveChangesAsync(ct);
+    }
 }

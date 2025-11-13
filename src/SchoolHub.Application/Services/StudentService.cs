@@ -43,7 +43,6 @@ public sealed class StudentService(IStudentRepository studentRepository)
         var student = new Student(sid, firstName, lastName, birthDate, address);
 
         await studentRepository.AddAsync(student, ct);
-        await studentRepository.SaveChangesAsync(ct);
         
         return student.ToDto();
     }
@@ -67,7 +66,6 @@ public sealed class StudentService(IStudentRepository studentRepository)
             new Address(city, street, postalCode)
             );
 
-        await studentRepository.SaveChangesAsync(ct);
         return student.ToDto();
     }
 
@@ -77,6 +75,5 @@ public sealed class StudentService(IStudentRepository studentRepository)
                       ?? throw new InvalidOperationException("Student not found");
 
         await studentRepository.RemoveAsync(student, ct);
-        await studentRepository.SaveChangesAsync(ct);
     }
 }
