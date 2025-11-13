@@ -9,8 +9,8 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
 {
     public async Task<List<SchoolClassDto>> GetAllAsync(CancellationToken ct = default)
     {
-        var sclasses = await classes.GetAllAsync(ct);
-        return sclasses.Select(c => c.ToDto()).ToList();
+        var sClasses = await classes.GetAllAsync(ct);
+        return sClasses.Select(c => c.ToDto()).ToList();
     }
 
     public async Task<SchoolClassDto> GetByIdAsync(Guid id, CancellationToken ct = default)

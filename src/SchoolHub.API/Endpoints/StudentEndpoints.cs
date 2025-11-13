@@ -1,4 +1,6 @@
-﻿using SchoolHub.Application.DTOs;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.Filters;
+using SchoolHub.Application.DTOs;
 using SchoolHub.Application.Services;
 
 namespace SchoolHub.API.Endpoints;
@@ -14,7 +16,14 @@ public static class StudentEndpoints
 
         endpoints.MapGet("/students/{id:guid}", async (Guid id, StudentService service, CancellationToken ct) =>
         {
-            return Results.Ok(await service.GetByIdAsync(id, ct));
+            try
+            {
+                return Results.Ok(await service.GetByIdAsync(id, ct));
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.NotFound(e.Message);
+            }
         });
 
         endpoints.MapGet("/students/by-id/{studentId}", async (
@@ -22,8 +31,15 @@ public static class StudentEndpoints
             StudentService service,
             CancellationToken ct) =>
         {
-            var student = await service.GetByStudentIdAsync(studentId, ct);
-            return Results.Ok(student);
+            try
+            {
+                var student = await service.GetByStudentIdAsync(studentId, ct);
+                return Results.Ok(student);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.NotFound(e.Message);
+            }
         });
 
         endpoints.MapPost("/students", async (
@@ -31,17 +47,24 @@ public static class StudentEndpoints
             StudentService service,
             CancellationToken ct) =>
         {
-            var result = await service.CreateAsync(
-                req.StudentId,
-                req.FirstName,
-                req.LastName,
-                req.BirthDate,
-                req.City,
-                req.Street,
-                req.PostalCode,
-                ct);
+            try
+            {
+                var result = await service.CreateAsync(
+                    req.StudentId,
+                    req.FirstName,
+                    req.LastName,
+                    req.BirthDate,
+                    req.City,
+                    req.Street,
+                    req.PostalCode,
+                    ct);
 
-            return Results.Created($"/students/{result.Id}", result);
+                return Results.Created($"/students/{result.Id}", result);
+            }
+            catch (InvalidOperationException e)
+            {
+                return e.Message == "Student not found" ? Results.NotFound(e.Message) : Results.BadRequest(e.Message);
+            }
         });
 
         endpoints.MapPut("/students/{id:guid}", async (
@@ -69,8 +92,15 @@ public static class StudentEndpoints
             StudentService service,
             CancellationToken ct) =>
         {
-            await service.DeleteAsync(id, ct);
-            return Results.NoContent();
+            try
+            {
+                await service.DeleteAsync(id, ct);
+                return Results.NoContent();
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.NotFound(e.Message);
+            }
         });
         
         return endpoints;
