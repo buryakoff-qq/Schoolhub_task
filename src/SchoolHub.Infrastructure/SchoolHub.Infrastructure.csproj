@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Schoolhub.Infrastructure</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SchoolHub.Application\SchoolHub.Application.csproj" />
+      <ProjectReference Include="..\SchoolHub.Domain\SchoolHub.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.11" />
+      <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
+    </ItemGroup>
+
+</Project>
