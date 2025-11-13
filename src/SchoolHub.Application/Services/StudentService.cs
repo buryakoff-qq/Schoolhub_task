@@ -38,7 +38,7 @@ public sealed class StudentService(IStudentRepository studentRepository)
             throw new InvalidOperationException("Student Id must be unique");
 
         var sid = new StudentId(studentId);
-        var address = new Address(city!, street!, postalCode!);
+        var address = new Address(city, street, postalCode);
 
         var student = new Student(sid, firstName, lastName, birthDate, address);
 
@@ -64,7 +64,7 @@ public sealed class StudentService(IStudentRepository studentRepository)
             firstName,
             lastName,
             birthDate,
-            new Address(city!, street!, postalCode!)
+            new Address(city, street, postalCode)
             );
 
         await studentRepository.SaveChangesAsync(ct);

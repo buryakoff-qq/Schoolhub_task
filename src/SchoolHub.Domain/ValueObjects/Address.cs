@@ -8,7 +8,7 @@ public sealed class Address
     
     private Address() { }
 
-    public Address(string city, string street, string postalCode)
+    public Address(string? city, string? street, string? postalCode)
     {
         City = city?.Trim();
         Street = street?.Trim();
