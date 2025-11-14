@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolHub.Domain.Entities;
 
-namespace Schoolhub.Infrastructure.Persistence;
+namespace SchoolHub.Infrastructure.Persistence;
 
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

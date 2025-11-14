@@ -17,7 +17,6 @@ public sealed class StudentService(IStudentRepository studentRepository)
 
     public async Task<StudentDto> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-       
         var student = await studentRepository.GetByIdAsync(id, ct);
         if (student is null)
             throw new StudentNotFoundException();

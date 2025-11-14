@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolHub.Application.Interfaces;
 using SchoolHub.Application.Services;
-using Schoolhub.Infrastructure.Persistence;
-using Schoolhub.Infrastructure.Repositories;
+using SchoolHub.Infrastructure.Persistence;
+using SchoolHub.Infrastructure.Repositories;
 
 namespace SchoolHub.API.Extensions;
 

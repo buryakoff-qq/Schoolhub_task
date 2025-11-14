@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolHub.Application.Interfaces;
 using SchoolHub.Domain.Entities;
-using Schoolhub.Infrastructure.Persistence;
+using SchoolHub.Infrastructure.Persistence;
 
-namespace Schoolhub.Infrastructure.Repositories;
+namespace SchoolHub.Infrastructure.Repositories;
 
-public class StudentRepository(AppDbContext db) : IStudentRepository
+public sealed class StudentRepository(AppDbContext db) : IStudentRepository
 {
     public async Task<Student> GetByIdAsync(Guid id, CancellationToken ct = default)
     {

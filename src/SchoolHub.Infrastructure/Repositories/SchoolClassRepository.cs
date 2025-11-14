@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolHub.Application.Interfaces;
 using SchoolHub.Domain.Entities;
-using Schoolhub.Infrastructure.Persistence;
+using SchoolHub.Infrastructure.Persistence;
 
-namespace Schoolhub.Infrastructure.Repositories;
+namespace SchoolHub.Infrastructure.Repositories;
 
 public sealed class SchoolClassRepository(AppDbContext db) : ISchoolClassRepository
 {
