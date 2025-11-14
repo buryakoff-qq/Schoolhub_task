@@ -1,4 +1,6 @@
-﻿namespace SchoolHub.Domain.ValueObjects;
+﻿using SchoolHub.Domain.Exceptions;
+
+namespace SchoolHub.Domain.ValueObjects;
 
 public sealed class StudentId
 {
@@ -9,7 +11,7 @@ public sealed class StudentId
     public StudentId(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new InvalidOperationException("Student ID cannot be empty");
+            throw new StudentIdCannotBeEmptyException();
         Value = value.Trim();
     }
 }

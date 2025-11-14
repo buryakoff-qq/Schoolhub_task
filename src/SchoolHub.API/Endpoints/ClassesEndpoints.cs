@@ -1,5 +1,7 @@
 ﻿using SchoolHub.Application.DTOs;
+using SchoolHub.Application.Exceptions;
 using SchoolHub.Application.Services;
+using SchoolHub.Domain.Exceptions;
 
 namespace SchoolHub.API.Endpoints;
 
@@ -14,7 +16,14 @@ public static class ClassesEndpoints
 
         endpoints.MapGet("/classes/{id:guid}", async (Guid id, SchoolClassService service, CancellationToken ct) =>
         {
-            return Results.Ok(await service.GetByIdAsync(id, ct));
+            try
+            {
+                return Results.Ok(await service.GetByIdAsync(id, ct));
+            }
+            catch (ClassNotFoundException)
+            {
+                return Results.NotFound();
+            }
         });
 
         endpoints.MapPost("/classes", async (
@@ -27,9 +36,9 @@ public static class ClassesEndpoints
                 var result = await service.CreateAsync(req.Name, req.Teacher, ct);
                 return Results.Created($"/classes/{result.Id}", result);
             }
-            catch (InvalidOperationException e)
+            catch (SchoolClassDomainException)
             {
-                return Results.NotFound(e.Message);
+                return Results.BadRequest();
             }
         });
 
@@ -44,9 +53,13 @@ public static class ClassesEndpoints
                 var result = await service.UpdateAsync(id, req.Name, req.Teacher, ct);
                 return Results.Ok(result);
             }
-            catch (InvalidOperationException e)
+            catch (ClassNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
+            }
+            catch (SchoolClassDomainException)
+            {
+                return Results.BadRequest();
             }
         });
 
@@ -60,9 +73,9 @@ public static class ClassesEndpoints
                 await service.DeleteAsync(id, ct);
                 return Results.NoContent();
             }
-            catch (InvalidOperationException e)
+            catch (ClassNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
             }
         });
 
@@ -77,9 +90,21 @@ public static class ClassesEndpoints
                 await service.AssignAsync(classId, studentId, ct);
                 return Results.Ok();
             }
-            catch (InvalidOperationException e)
+            catch (ClassNotFoundException)
             {
-                return e.Message == "Class Not Found" ? Results.NotFound(e.Message) : Results.BadRequest(e.Message);
+                return Results.NotFound();
+            }
+            catch (StudentNotFoundException)
+            {
+                return Results.NotFound();
+            }
+            catch (StudentAlreadyAssignedToClassException)
+            {
+                return Results.BadRequest();
+            }
+            catch (MaximumStudentsReachedException)
+            {
+                return Results.BadRequest();
             }
         });
 
@@ -94,9 +119,9 @@ public static class ClassesEndpoints
                 await service.UnassignAsync(classId, studentId, ct);
                 return Results.NoContent();
             }
-            catch (InvalidOperationException e)
+            catch (ClassNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
             }
         });
         

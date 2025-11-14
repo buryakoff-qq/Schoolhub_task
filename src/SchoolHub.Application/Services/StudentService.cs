@@ -1,4 +1,5 @@
 ﻿using SchoolHub.Application.DTOs;
+using SchoolHub.Application.Exceptions;
 using SchoolHub.Application.Interfaces;
 using SchoolHub.Application.Mappers;
 using SchoolHub.Domain.Entities;
@@ -19,13 +20,13 @@ public sealed class StudentService(IStudentRepository studentRepository)
        
         var student = await studentRepository.GetByIdAsync(id, ct);
         if (student is null)
-            throw new InvalidOperationException("Student not found");
+            throw new StudentNotFoundException();
         return student.ToDto();
     }
     public async Task<StudentDto> GetByStudentIdAsync(string value, CancellationToken ct = default)
     {
         var student = await studentRepository.GetByStudentIdAsync(value, ct)
-                      ?? throw new InvalidOperationException("Student not found");
+                      ?? throw new StudentNotFoundException();
 
         return student.ToDto();
     }
@@ -35,7 +36,7 @@ public sealed class StudentService(IStudentRepository studentRepository)
     {
         var exists = await studentRepository.GetByStudentIdAsync(studentId, ct);
         if (exists is not null)
-            throw new InvalidOperationException("Student Id must be unique");
+            throw new StudentIdMustBeUniqueException();
 
         var sid = new StudentId(studentId);
         var address = new Address(city, street, postalCode);
@@ -52,11 +53,11 @@ public sealed class StudentService(IStudentRepository studentRepository)
     {
         var student = await studentRepository.GetByIdAsync(id, ct);
         if (student is null)
-            throw new InvalidOperationException("Student not found");
+            throw new StudentNotFoundException();
 
         var existingStudent = await studentRepository.GetByStudentIdAsync(studentId, ct);
         if (existingStudent is not null && existingStudent.Id != id)
-            throw new InvalidOperationException("Student Id must be unique");
+            throw new StudentIdMustBeUniqueException();
         
         student.Update(
             new StudentId(studentId),
@@ -66,13 +67,15 @@ public sealed class StudentService(IStudentRepository studentRepository)
             new Address(city, street, postalCode)
             );
 
+        await studentRepository.UpdateAsync(student, ct);
+
         return student.ToDto();
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
         var student = await studentRepository.GetByIdAsync(id, ct)
-                      ?? throw new InvalidOperationException("Student not found");
+                      ?? throw new StudentNotFoundException();
 
         await studentRepository.RemoveAsync(student, ct);
     }

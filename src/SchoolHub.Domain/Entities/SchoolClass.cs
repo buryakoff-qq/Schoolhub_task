@@ -1,4 +1,6 @@
-﻿namespace SchoolHub.Domain.Entities;
+﻿using SchoolHub.Domain.Exceptions;
+
+namespace SchoolHub.Domain.Entities;
 
 public sealed class SchoolClass
 {
@@ -22,9 +24,9 @@ public sealed class SchoolClass
     public void Update(string name, string teacher)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new InvalidOperationException("Class name field cannot be empty");
+            throw new ClassNameCannotBeEmptyException();
         if (string.IsNullOrWhiteSpace(teacher))
-            throw new InvalidOperationException("Teacher field cannot be empty");
+            throw new TeacherCannotBeEmptyException();
         
         Name = name.Trim();
         Teacher = teacher.Trim();
@@ -33,9 +35,9 @@ public sealed class SchoolClass
     public void AddStudent(Guid studentId)
     {
         if (_studentIds.Count >= MaxStudents)
-            throw new InvalidOperationException("Maximum students reached");
+            throw new MaximumStudentsReachedException();
         if (_studentIds.Contains(studentId))
-            throw new InvalidOperationException("Student already assigned to this class");
+            throw new StudentAlreadyAssignedToClassException();
         
         _studentIds.Add(studentId);
     }

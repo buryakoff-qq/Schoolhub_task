@@ -19,7 +19,8 @@ public sealed class SchoolClassRepository(AppDbContext db) : ISchoolClassReposit
 
     public async Task AddAsync(SchoolClass sClass, CancellationToken ct = default)
     {
-        await db.SchoolClasses.AddAsync(sClass, ct);   
+        await db.SchoolClasses.AddAsync(sClass, ct);  
+        await db.SaveChangesAsync(ct);
     }
 
     public async Task UpdateAsync(SchoolClass sClass, CancellationToken ct = default)

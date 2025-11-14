@@ -25,6 +25,7 @@ public class StudentRepository(AppDbContext db) : IStudentRepository
     public async Task AddAsync(Student student, CancellationToken ct = default)
     {
         await db.Students.AddAsync(student, ct);
+        await db.SaveChangesAsync(ct);
     }
 
     public async Task UpdateAsync(Student student, CancellationToken ct = default)

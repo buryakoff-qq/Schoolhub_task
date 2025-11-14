@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.Filters;
-using SchoolHub.Application.DTOs;
+﻿using SchoolHub.Application.DTOs;
+using SchoolHub.Application.Exceptions;
 using SchoolHub.Application.Services;
+using SchoolHub.Domain.Exceptions;
 
 namespace SchoolHub.API.Endpoints;
 
@@ -20,9 +20,9 @@ public static class StudentEndpoints
             {
                 return Results.Ok(await service.GetByIdAsync(id, ct));
             }
-            catch (InvalidOperationException e)
+            catch (StudentNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
             }
         });
 
@@ -36,9 +36,9 @@ public static class StudentEndpoints
                 var student = await service.GetByStudentIdAsync(studentId, ct);
                 return Results.Ok(student);
             }
-            catch (InvalidOperationException e)
+            catch (StudentNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
             }
         });
 
@@ -61,9 +61,13 @@ public static class StudentEndpoints
 
                 return Results.Created($"/students/{result.Id}", result);
             }
-            catch (InvalidOperationException e)
+            catch (StudentIdMustBeUniqueException)
             {
-                return e.Message == "Student not found" ? Results.NotFound(e.Message) : Results.BadRequest(e.Message);
+                return Results.BadRequest();
+            }
+            catch (StudentDomainException)
+            {
+                return Results.BadRequest();
             }
         });
 
@@ -73,18 +77,33 @@ public static class StudentEndpoints
             StudentService service,
             CancellationToken ct) =>
         {
-            var result = await service.UpdateAsync(
-                id,
-                req.StudentId,
-                req.FirstName,
-                req.LastName,
-                req.BirthDate,
-                req.City,
-                req.Street,
-                req.PostalCode,
-                ct);
+            try
+            {
+                var result = await service.UpdateAsync(
+                    id,
+                    req.StudentId,
+                    req.FirstName,
+                    req.LastName,
+                    req.BirthDate,
+                    req.City,
+                    req.Street,
+                    req.PostalCode,
+                    ct);
 
-            return Results.Ok(result);
+                return Results.Ok(result);
+            }
+            catch (StudentNotFoundException)
+            {
+                return Results.NotFound();
+            }
+            catch (StudentIdMustBeUniqueException)
+            {
+                return Results.BadRequest();
+            }
+            catch (StudentDomainException)
+            {
+                return Results.BadRequest();
+            }
         });
 
         endpoints.MapDelete("/students/{id:guid}", async (
@@ -97,9 +116,9 @@ public static class StudentEndpoints
                 await service.DeleteAsync(id, ct);
                 return Results.NoContent();
             }
-            catch (InvalidOperationException e)
+            catch (StudentNotFoundException)
             {
-                return Results.NotFound(e.Message);
+                return Results.NotFound();
             }
         });
         

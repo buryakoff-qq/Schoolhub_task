@@ -1,4 +1,5 @@
-﻿using SchoolHub.Domain.ValueObjects;
+﻿using SchoolHub.Domain.Exceptions;
+using SchoolHub.Domain.ValueObjects;
 
 namespace SchoolHub.Domain.Entities;
 
@@ -23,11 +24,11 @@ public sealed class Student
     public void Update(StudentId studentId, string firstName, string lastName, DateOnly birthDate, Address address)
     {
         if (string.IsNullOrWhiteSpace(firstName))
-            throw new InvalidOperationException("First name cannot empty.");
+            throw new FirstNameCannotBeEmptyException();
         if (string.IsNullOrWhiteSpace(lastName))
-            throw new InvalidOperationException("Last name cannot empty.");
+            throw new LastNameCannotBeEmptyException();
         
-        StudentId = studentId ?? throw new InvalidOperationException("StudentId cannot be null");
+        StudentId = studentId ?? throw new StudentIdCannotBeEmptyException();
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
         BirthDate = birthDate;

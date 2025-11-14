@@ -1,4 +1,5 @@
 ﻿using SchoolHub.Application.DTOs;
+using SchoolHub.Application.Exceptions;
 using SchoolHub.Application.Interfaces;
 using SchoolHub.Application.Mappers;
 using SchoolHub.Domain.Entities;
@@ -17,7 +18,7 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
     {
         var sClass = await classes.GetByIdAsync(id, ct);
         if (sClass is null)
-            throw new InvalidOperationException("Class not found");
+            throw new ClassNotFoundException();
         
         return sClass.ToDto();
     }
@@ -40,7 +41,7 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
         CancellationToken ct = default)
     {
         var sClass = await classes.GetByIdAsync(id, ct)
-                     ?? throw new InvalidOperationException("Class not found");
+                     ?? throw new ClassNotFoundException();
 
         sClass.Update(name, teacher);
 
@@ -52,7 +53,7 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
         var sClass = await classes.GetByIdAsync(id, ct)
-                     ?? throw new InvalidOperationException("Class not found");
+                     ?? throw new ClassNotFoundException();
 
         await classes.RemoveAsync(sClass, ct);
     }
@@ -61,24 +62,23 @@ public sealed class SchoolClassService(ISchoolClassRepository classes, IStudentR
     {
         var sClass = await classes.GetByIdAsync(id, ct);
         if (sClass is null)
-            throw new InvalidOperationException("Class not found");
+            throw new ClassNotFoundException();
         
         var student = await students.GetByIdAsync(studentId, ct);
         if (student is null)
-            throw new InvalidOperationException("Student not found");
-        
-        if (sClass.StudentIds.Contains(studentId))
-            throw new InvalidOperationException("Student already assigned");
+            throw new StudentNotFoundException();
         
         sClass.AddStudent(studentId);
+        await classes.UpdateAsync(sClass, ct);
     }
     
     public async Task UnassignAsync(Guid classId, Guid studentId, CancellationToken ct = default)
     {
         var sClass = await classes.GetByIdAsync(classId, ct);
         if (sClass is null)
-            throw new InvalidOperationException("Class not found");
+            throw new ClassNotFoundException();
 
         sClass.RemoveStudent(studentId);
+        await classes.UpdateAsync(sClass, ct);
     }
 }
