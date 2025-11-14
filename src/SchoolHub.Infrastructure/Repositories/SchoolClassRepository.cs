@@ -7,7 +7,7 @@ namespace SchoolHub.Infrastructure.Repositories;
 
 public sealed class SchoolClassRepository(AppDbContext db) : ISchoolClassRepository
 {
-    public async Task<SchoolClass> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<SchoolClass?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await db.SchoolClasses.FirstOrDefaultAsync(c => c.Id == id, ct);
     }

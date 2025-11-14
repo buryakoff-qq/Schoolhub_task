@@ -7,12 +7,12 @@ namespace SchoolHub.Infrastructure.Repositories;
 
 public sealed class StudentRepository(AppDbContext db) : IStudentRepository
 {
-    public async Task<Student> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<Student?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await db.Students.FirstOrDefaultAsync(s => s.Id == id, ct);
     }
 
-    public async Task<Student> GetByStudentIdAsync(string value, CancellationToken ct = default)
+    public async Task<Student?> GetByStudentIdAsync(string value, CancellationToken ct = default)
     {
         return await db.Students.FirstOrDefaultAsync(s => s.StudentId.Value == value, ct);
     }
