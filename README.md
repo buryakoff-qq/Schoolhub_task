@@ -6,12 +6,12 @@ The project provides CRUD operations for students (with unique student IDs) and 
 
 ## Technologies
 
-- **.NET 9.0**
-- **ASP.NET Core Minimal API**
-- **Entity Framework Core 9.0** (In-Memory Database)
-- **Scalar** for interactive API documentation
-- **xUnit** for unit testing
-- **Moq** for mocking dependencies in tests
+- .NET 9.0
+- ASP.NET Core Minimal API
+- Entity Framework Core 9.0
+- Scalar
+- xUnit
+- Moq
 
 ## Project Structure
 
@@ -48,20 +48,10 @@ Schoolhub test task/
 
 ```bash
 dotnet build
-```
-
-```bash
 dotnet test
-```
-
-```bash
 cd src/SchoolHub.API
 dotnet run
 ```
-
-API will be available at `https://localhost:5001` or `http://localhost:5000`.  
-OpenAPI documentation: `https://localhost:5001/openapi/v1.json`  
-Scalar UI (Development only): `https://localhost:5001/scalar/v1`
 
 ## API Endpoints
 
@@ -70,22 +60,24 @@ Scalar UI (Development only): `https://localhost:5001/scalar/v1`
 #### Get all students
 ```
 GET /students
+Returns: 200 OK
 ```
 
 #### Get student by ID
 ```
 GET /students/{id}
+Returns: 200 OK, 404 Not Found
 ```
 
 #### Get student by StudentId
 ```
 GET /students/by-id/{studentId}
+Returns: 200 OK, 404 Not Found
 ```
 
 #### Create student
 ```
 POST /students
-Content-Type: application/json
 
 {
   "studentId": "STU001",
@@ -96,15 +88,15 @@ Content-Type: application/json
   "street": "Main St",
   "postalCode": "10001"
 }
-```
+Returns: 201 Created, 400 Bad Request
 
-**Required fields**: `studentId`, `firstName`, `lastName`, `birthDate`  
-**Optional fields**: `city`, `street`, `postalCode`
+Required fields: studentId, firstName, lastName, birthDate
+Optional fields: city, street, postalCode
+```
 
 #### Update student
 ```
 PUT /students/{id}
-Content-Type: application/json
 
 {
   "studentId": "STU001",
@@ -115,11 +107,13 @@ Content-Type: application/json
   "street": "Park Ave",
   "postalCode": "02101"
 }
+Returns: 200 OK, 404 Not Found, 400 Bad Request
 ```
 
 #### Delete student
 ```
 DELETE /students/{id}
+Returns: 204 No Content, 404 Not Found
 ```
 
 ### School Classes
@@ -127,67 +121,59 @@ DELETE /students/{id}
 #### Get all classes
 ```
 GET /classes
+Returns: 200 OK
 ```
 
 #### Get class by ID
 ```
 GET /classes/{id}
+Returns: 200 OK, 404 Not Found
 ```
 
 #### Create class
 ```
 POST /classes
-Content-Type: application/json
 
 {
   "name": "Mathematics",
   "teacher": "Mr. Smith"
 }
+Returns: 201 Created, 400 Bad Request
 ```
 
 #### Update class
 ```
 PUT /classes/{id}
-Content-Type: application/json
 
 {
   "name": "Advanced Mathematics",
   "teacher": "Ms. Johnson"
 }
+Returns: 200 OK, 404 Not Found, 400 Bad Request
 ```
 
 #### Delete class
 ```
 DELETE /classes/{id}
+Returns: 204 No Content, 404 Not Found
 ```
 
 #### Assign student to class
 ```
 POST /classes/{classId}/assign/{studentId}
-```
+Returns: 200 OK, 404 Not Found, 400 Bad Request
 
-**Constraints**:
-- Maximum 20 students per class
-- A student cannot be assigned to the same class twice
+Constraints: Maximum 20 students per class, student cannot be assigned twice
+```
 
 #### Unassign student from class
 ```
 DELETE /classes/{classId}/unassign/{studentId}
+Returns: 204 No Content, 404 Not Found
 ```
 
-## Business Rules
+## Testing
 
-### Students
-- `studentId` must be unique
-- `firstName` and `lastName` are required and cannot be empty
-- `birthDate` is required
-- Address (city, street, postalCode) is optional
-
-### School Classes
-- `name` and `teacher` are required and cannot be empty
-- Maximum 20 students per class
-- A student cannot be assigned to the same class twice
-
-## Error Handling
-
-API endpoints return appropriate HTTP status codes (200, 201, 204, 400, 404) without error details in the response body.
+The project includes unit tests:
+- **Domain layer**: 26 tests (entities, value objects, business rules)
+- **Application layer**: 28 tests (services with mocked repositories)
